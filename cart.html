@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - Woodex</title>
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="stylesheet" href="./assets/css/cart.css">
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+    <header class="header" data-header>
+        <div class="container">
+          <div class="input-wrapper">
+            <input type="search" name="search" placeholder="Search Anything..." class="input-field">
+            <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+          </div>
+    
+          <a href="#" class="logo">Woodex</a>
+    
+          <div class="header-action">
+            <button class="header-action-btn" aria-label="user">
+              <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+            </button>
+    
+            <button class="header-action-btn" aria-label="favorite list" id="wishlist-btn">
+              <ion-icon name="heart-outline" aria-hidden="true"></ion-icon>
+              <span class="btn-badge wishlist-count">0</span>
+            </button>
+    
+            <button class="header-action-btn" aria-label="cart" id="cart-btn">
+              <ion-icon name="bag-handle-outline" aria-hidden="true"></ion-icon>
+              <span class="btn-badge cart-count">0</span>
+            </button>
+    
+            <button class="header-action-btn" aria-label="open menu" data-nav-toggler>
+              <ion-icon name="menu-outline" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </header>
+   <script>
+       // Add click event listeners to cart and wishlist buttons
+       document.getElementById('cart-btn').addEventListener('click', () => {
+        window.location.href = 'cart.html';
+      });
+      document.getElementById('wishlist-btn').addEventListener('click', () => {
+        window.location.href = 'wishlist.html';
+      });
+   </script>
+  <main>
+    <section class="cart-section">
+      <h1>Your Cart</h1>
+      <div id="cart-items" class="cart-grid"></div>
+      <div id="cart-total"></div>
+    </section>
+  </main>
+
+  <footer>
+    <!-- Include your footer here -->
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartContainer = document.getElementById('cart-items');
+      const cartTotal = document.getElementById('cart-total');
+
+      if (cartItems.length === 0) {
+        cartContainer.innerHTML = '<p>Your cart is empty.</p>';
+      } else {
+        let total = 0;
+        cartItems.forEach(item => {
+          const itemElement = document.createElement('div');
+          itemElement.className = 'cart-item';
+          itemElement.innerHTML = `
+            <img src="${item.image}" alt="${item.name}">
+            <h3>${item.name}</h3>
+            <p>$${item.price.toFixed(2)} x ${item.quantity}</p>
+            <button onclick="updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
+            <button onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+            <button onclick="removeFromCart(${item.id})">Remove</button>
+          `;
+          cartContainer.appendChild(itemElement);
+          total += item.price * item.quantity;
+        });
+        cartTotal.innerHTML = `<h2>Total: $${total.toFixed(2)}</h2>`;
+      }
+    });
+
+    function updateQuantity(id, newQuantity) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const item = cart.find(item => item.id === id);
+      if (item) {
+        item.quantity = Math.max(0, newQuantity);
+        if (item.quantity === 0) {
+          cart = cart.filter(item => item.id !== id);
+        }
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      location.reload();
+    }
+
+    function removeFromCart(id) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart = cart.filter(item => item.id !== id);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      location.reload();
+
+       
+ 
+    }
+  </script>
+      <script src="./assets/js/script.js" defer></script>
+
+</body>
+</html>
